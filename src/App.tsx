@@ -1,26 +1,26 @@
 // import { richText } from "./data";
-import richText from './data.json';
+import data from './data.json';
 import RichTextInput from "./components/rich-text-input";
-// import { useEffect, useState } from "react";
-
-if (!localStorage.getItem('data')) {
-  localStorage.setItem('data', JSON.stringify(richText));
-}
+import { useState } from 'react';
+import RichText from './components/rich-text';
 
 function App() {
-  const richText = JSON.parse(localStorage.getItem('data') as any);
+  const [richText, setRichText] = useState(data);
 
-  const saveUpdatedRichText = (updatedRichText: typeof richText) => {
-    console.log(updatedRichText);
-    localStorage.setItem('data', JSON.stringify(updatedRichText));
+  const onBlur = (v: typeof data) => {
+    console.log(v);
+    setRichText(v);
   }
 
   return (
-    <RichTextInput 
-      richText={richText as any} 
-      edit
-      onBlur={saveUpdatedRichText}
-    />
+    <>
+      <RichTextInput 
+        richText={richText} 
+        edit
+        onBlur={onBlur}
+      />
+      <RichText richText={richText} />
+    </>
   )
 }
 
