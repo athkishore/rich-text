@@ -8,7 +8,7 @@ function App() {
   const [richText, setRichText] = useState(data);
 
   const onBlur = (v: typeof data) => {
-    console.log(v);
+    console.log('runing onblur');
     setRichText(v);
   }
 
