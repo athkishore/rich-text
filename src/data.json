@@ -3,16 +3,37 @@
     "spans": [
         {
             "start": 0,
-            "end": 12,
+            "end": 5,
             "attributes": {
                 "color": "red"
             }
         },
         {
-            "start": 12,
-            "end": 24,
+            "start": 5,
+            "end": 8,
+            "attributes": {
+                "color": "brown"
+            }
+        },
+        {
+            "start": 8,
+            "end": 13,
             "attributes": {
                 "color": "blue"
+            }
+        },
+        {
+            "start": 13,
+            "end": 20,
+            "attributes": {
+                "color": "green"
+            }
+        },
+        {
+            "start": 20,
+            "end": 24,
+            "attributes": {
+                "color": "orange"
             }
         }
     ]

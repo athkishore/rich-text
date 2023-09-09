@@ -14,12 +14,16 @@ function App() {
 
   return (
     <>
+    <div>
       <RichTextInput 
         richText={richText} 
         edit
         onBlur={onBlur}
       />
+    </div>
+    <div>
       <RichText richText={richText} />
+    </div>
     </>
   )
 }
