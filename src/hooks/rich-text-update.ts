@@ -74,3 +74,7 @@ export function useRichTextUpdate(
         updateOnKeyUp
     };
 }
+
+// Edge cases and bugs
+// 1. Crashes if text is added after the last character.
+// 2. 
