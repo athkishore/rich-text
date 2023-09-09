@@ -2,6 +2,10 @@ import { richText } from "../data";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { updateContent, updateFormatting } from "../lib/utils";
 
+const specialKeys = [
+    'Control', 'Shift', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'
+];
+
 export function useRichTextUpdate(
     initialValue: typeof richText
 ) {
@@ -13,6 +17,8 @@ export function useRichTextUpdate(
         e.stopPropagation();
         if (e.ctrlKey) e.preventDefault();
 
+        if (specialKeys.includes(e.key)) return;
+
         const selection = window.getSelection()!;
         const range = selection.getRangeAt(0).cloneRange();
         const selectedLength = range.toString().length;
@@ -22,7 +28,6 @@ export function useRichTextUpdate(
         const endOffset = preCaretRange.toString().length;
         const startOffset = endOffset - selectedLength;
         
-        console.log('setting range: ', range);
         rangeRef.current = range.cloneRange();
         offsets.current = { start: startOffset, end: endOffset };
         
@@ -40,17 +45,25 @@ export function useRichTextUpdate(
                 endOffset
             )
         
-        // richTextRef.current = updatedRichText;
         setRichText(updatedRichText);
     }, [richText]);
 
     useEffect(() => {
-        console.log(offsets.current);
         const parentDiv = rangeRef.current?.startContainer.parentElement!.parentElement!;
-        const spanIndex = richText.spans.findIndex(span => span.start >= offsets.current.start);
+
+        const startSpanIndex = richText.spans.findIndex(span => span.start <= offsets.current.start && span.end > offsets.current.start);
+        const endSpanIndex = richText.spans.findIndex(span => span.end > offsets.current.end);
+        
+        const prevSpansLengthStart = richText.spans.reduce((acc, span, index) => acc + (index < startSpanIndex ? (span.end - span.start) : 0), 0);
+        const prevSpansLengthEnd = richText.spans.reduce((acc, span, index) => acc + (index < endSpanIndex ? (span.end - span.start) : 0), 0);
+        const localStartOffset = offsets.current.start - prevSpansLengthStart;
+        const localEndOffset = offsets.current.end - prevSpansLengthEnd;
+        
         rangeRef.current?.selectNodeContents(parentDiv);
-        rangeRef.current?.setStart(parentDiv, spanIndex);
-        rangeRef.current?.setEnd(parentDiv, spanIndex + 1);
+
+        rangeRef.current?.setStart(parentDiv.children[startSpanIndex].childNodes[0], localStartOffset);
+        rangeRef.current?.setEnd(parentDiv.children[endSpanIndex].childNodes[0], localEndOffset);
+
         const selection = window.getSelection()!;
         selection.removeAllRanges();
         rangeRef.current && selection.addRange(rangeRef.current);
