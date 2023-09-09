@@ -45,6 +45,7 @@ export function useRichTextUpdate(
                 endOffset
             )
         
+        console.log(updatedRichText)
         setRichText(updatedRichText);
     }, [richText]);
 
@@ -77,4 +78,4 @@ export function useRichTextUpdate(
 
 // Edge cases and bugs
 // 1. Crashes if text is added after the last character.
-// 2. 
+// 2. Text entry with selection across spans - incorrect logic

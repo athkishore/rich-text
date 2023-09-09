@@ -83,24 +83,42 @@ export function updateFormatting(
                 ...overlappingSpans[0],
                 start: endOffset
             });
-        } else if (overlappingSpans.length === 3) {
+        } else if (overlappingSpans.length >= 3) {
             middleSpans.push({
                 ...overlappingSpans[0],
                 end: startOffset
             });
 
             middleSpans.push({
-                ...overlappingSpans[1],
+                ...overlappingSpans[0],
                 start: startOffset,
+                attributes: {
+                    ...overlappingSpans[0].attributes,
+                    [attribute]: value
+                }
+            });
+
+            for (const span of overlappingSpans.slice(1, -1)) {
+                middleSpans.push({
+                    ...span,
+                    attributes: {
+                        ...span.attributes,
+                        [attribute]: value
+                    }
+                } as any);
+            }
+
+            middleSpans.push({
+                ...overlappingSpans.slice(-1)[0],
                 end: endOffset,
                 attributes: {
-                    ...overlappingSpans[1].attributes,
+                    ...overlappingSpans.slice(-1)[0].attributes,
                     [attribute]: value
                 }
             });
 
             middleSpans.push({
-                ...overlappingSpans[2],
+                ...overlappingSpans.slice(-1)[0],
                 start: endOffset
             });
         } else if (overlappingSpans.length === 2) {
@@ -112,9 +130,17 @@ export function updateFormatting(
             middleSpans.push({
                 ...overlappingSpans[0],
                 start: startOffset,
-                end: endOffset,
                 attributes: {
                     ...overlappingSpans[0].attributes,
+                    [attribute]: value
+                }
+            });
+
+            middleSpans.push({
+                ...overlappingSpans[1],
+                end: endOffset,
+                attributes: {
+                    ...overlappingSpans[1].attributes,
                     [attribute]: value
                 }
             });
