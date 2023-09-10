@@ -25,6 +25,7 @@ export default function RichTextInput(props: Props) {
             suppressContentEditableWarning
             onKeyUp={updateOnKeyUp}
             onKeyDown={e => e.ctrlKey ? e.preventDefault() : null}
+            // onKeyDown={e => e.preventDefault()}
             onBlur={onBlur}
         >
             <RichText 

@@ -17,6 +17,8 @@ export function useRichTextUpdate(
         e.stopPropagation();
         if (e.ctrlKey) e.preventDefault();
 
+        console.log(e.key);
+        
         if (specialKeys.includes(e.key)) return;
 
         const selection = window.getSelection()!;
@@ -62,6 +64,7 @@ export function useRichTextUpdate(
         
         rangeRef.current?.selectNodeContents(parentDiv);
 
+        console.log(parentDiv?.children, startSpanIndex);
         rangeRef.current?.setStart(parentDiv.children[startSpanIndex].childNodes[0], localStartOffset);
         rangeRef.current?.setEnd(parentDiv.children[endSpanIndex].childNodes[0], localEndOffset);
 
@@ -79,3 +82,4 @@ export function useRichTextUpdate(
 // Edge cases and bugs
 // 1. Crashes if text is added after the last character.
 // 2. Text entry with selection across spans - incorrect logic
+// 3. Crashes if text deleted with backspace or delete buttons

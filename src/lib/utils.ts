@@ -7,27 +7,87 @@ export function updateContent(
     endOffset: number
 ) {
     const diff = newTextContent.length - prevRichText.content.length;
-    const updatedSpans = prevRichText.spans.map(span => {
-        if (
-            (span.start < endOffset - diff && span.end >= endOffset - diff)
-            || (span.start === 0 && endOffset - diff === 0)
-        ) {
-            return {
-                ...span,
-                end: span.end + diff
-            };
-        } else if (
-            span.start >= endOffset - diff && span.end >= endOffset - diff
-        ) {
-            return {
-                ...span,
-                start: span.start + diff,
-                end: span.end + diff
-            };
-        } else {
-            return span;
-        }
-    }); 
+    let updatedSpans: typeof richText.spans;
+
+    console.log(endOffset, diff);
+
+    const effectiveStartOffset = newTextContent.split('')
+        .findIndex((char, index) => char !== prevRichText.content[index]);
+
+    const effectiveEndOffset = endOffset - diff;
+
+    console.log(effectiveStartOffset, effectiveEndOffset);
+
+    if (effectiveEndOffset - effectiveStartOffset <= 1) {
+        updatedSpans = prevRichText.spans.map(span => {
+            if (
+                (span.start < endOffset - diff && span.end >= endOffset - diff)
+                || (span.start === 0 && endOffset - diff === 0)
+            ) {
+                return {
+                    ...span,
+                    end: span.end + diff
+                };
+            } else if (
+                span.start >= endOffset - diff && span.end >= endOffset - diff
+            ) {
+                return {
+                    ...span,
+                    start: span.start + diff,
+                    end: span.end + diff
+                };
+            } else {
+                return span;
+            }
+        });
+    } else {
+        const precedingSpans = prevRichText.spans
+            .filter(span => span.end <= effectiveStartOffset);
+        const overlappingSpans = prevRichText.spans
+            .filter(span => span.start < effectiveEndOffset && span.end > effectiveStartOffset);
+        let succeedingSpans = prevRichText.spans
+            .filter(span => span.start >= effectiveEndOffset);
+
+        console.log(precedingSpans, overlappingSpans, succeedingSpans);
+            
+        let middleSpans = [];
+        if (overlappingSpans.length === 1) {
+            middleSpans.push({
+                ...overlappingSpans[0],
+                end: overlappingSpans[0].end + diff
+            });
+
+            for (const span of succeedingSpans) {
+                span.start += diff;
+                span.end += diff;
+            }
+        } else if (overlappingSpans.length >= 2) {
+            middleSpans.push({
+                ...overlappingSpans[0],
+                end: endOffset
+            });
+
+            middleSpans.push({
+                ...overlappingSpans.slice(-1)[0],
+                start: endOffset,
+                end: overlappingSpans.slice(-1)[0].end + diff,
+            });
+
+            for (const span of succeedingSpans) {
+                span.start += diff;
+                span.end += diff;
+            }
+        } 
+
+        updatedSpans = [
+            ...precedingSpans,
+            ...middleSpans,
+            ...succeedingSpans
+        ].filter(span => span.start !== span.end);
+
+        console.log(updatedSpans);
+
+    } 
     // Bugs in the span logic above:
     // 1. When the selection covers two spans, there is inconsistency
 
