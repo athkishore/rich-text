@@ -9,14 +9,14 @@ export function updateContent(
     const diff = newTextContent.length - prevRichText.content.length;
     let updatedSpans: typeof richText.spans;
 
-    console.log(endOffset, diff);
-
-    const effectiveStartOffset = newTextContent.split('')
+    let effectiveStartOffset = newTextContent.split('')
         .findIndex((char, index) => char !== prevRichText.content[index]);
 
-    const effectiveEndOffset = endOffset - diff;
+    if (effectiveStartOffset === -1) {
+        effectiveStartOffset = newTextContent.length;
+    }
 
-    console.log(effectiveStartOffset, effectiveEndOffset);
+    const effectiveEndOffset = endOffset - diff;
 
     if (effectiveEndOffset - effectiveStartOffset <= 1) {
         updatedSpans = prevRichText.spans.map(span => {
@@ -45,10 +45,8 @@ export function updateContent(
             .filter(span => span.end <= effectiveStartOffset);
         const overlappingSpans = prevRichText.spans
             .filter(span => span.start < effectiveEndOffset && span.end > effectiveStartOffset);
-        let succeedingSpans = prevRichText.spans
-            .filter(span => span.start >= effectiveEndOffset);
-
-        console.log(precedingSpans, overlappingSpans, succeedingSpans);
+        let succeedingSpans = structuredClone(prevRichText.spans
+            .filter(span => span.start >= effectiveEndOffset));
             
         let middleSpans = [];
         if (overlappingSpans.length === 1) {
@@ -84,13 +82,7 @@ export function updateContent(
             ...middleSpans,
             ...succeedingSpans
         ].filter(span => span.start !== span.end);
-
-        console.log(updatedSpans);
-
     } 
-    // Bugs in the span logic above:
-    // 1. When the selection covers two spans, there is inconsistency
-
 
     return {
         ...prevRichText,
@@ -110,6 +102,9 @@ export function updateFormatting(
     if (key === 'b') {
         attribute = 'fontWeight';
         value = 'bold';
+    } else if (key === 'r') {
+        attribute = 'color';
+        value = 'red';
     } else {
         return prevRichText;
     }
