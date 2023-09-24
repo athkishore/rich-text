@@ -23,7 +23,6 @@ export default function RichTextInput(props: Props) {
             ref={contentEditableDivRef}
             contentEditable={props.edit}
             onKeyUp={updateOnKeyUp}
-            onKeyDown={e => e.ctrlKey ? e.preventDefault() : null}
             onBlur={onBlur}
             style={{ whiteSpace: 'pre-line' }}
         >

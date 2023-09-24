@@ -15,9 +15,10 @@ export function useRichTextUpdate(
     const offsets = useRef({ start: 0, end: 0 });
     const contentEditableDivRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => setRichText(initialValue), [initialValue]);
+
     const updateOnKeyUp = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
         e.stopPropagation();
-        if (e.ctrlKey) e.preventDefault();
         
         if (specialKeys.includes(e.key)) return;
         if (!contentEditableDivRef.current) return;
@@ -114,6 +115,8 @@ function renderRichText(element: HTMLDivElement, data: typeof richText) {
 
 
 // Edge cases and bugs
-// 1. Crashes if text is added after the last character.
-// 2. Text entry with selection across spans - incorrect logic
-// 3. Crashes if text deleted with backspace or delete buttons
+// 1. Crashes if all the text is deleted
+
+// Restructuring of actions
+// onkeyup -> 
+//  - if !e.ctrlKey -> updateContent
