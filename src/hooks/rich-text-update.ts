@@ -116,6 +116,7 @@ function renderRichText(element: HTMLDivElement, data: typeof richText) {
 
 // Edge cases and bugs
 // 1. Crashes if all the text is deleted
+// 2. On entering new line, cursor stays at the end of the first line
 
 // Restructuring of actions
 // onkeyup -> 
