@@ -18,10 +18,11 @@ function App() {
         richText={richText} 
         edit
         onBlur={onBlur}
+        style={{ fontSize: '1.25rem'}}
       />
     </div>
     <div>
-      <RichText richText={richText} />
+      <RichText richText={richText} style={{ fontSize: '1.25rem' }} />
     </div>
     </>
   )

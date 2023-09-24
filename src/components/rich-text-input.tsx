@@ -1,10 +1,12 @@
+import { CSSProperties } from 'react';
 import richText from '../data.json';
 import { useRichTextUpdate } from '../hooks/rich-text-update';
 
 type Props = {
     richText: typeof richText,
     edit?: boolean,
-    onBlur?: (v: typeof richText) => void
+    onBlur?: (v: typeof richText) => void,
+    style?: CSSProperties
 };
 
 export default function RichTextInput(props: Props) {
@@ -24,7 +26,7 @@ export default function RichTextInput(props: Props) {
             contentEditable={props.edit}
             onKeyUp={updateOnKeyUp}
             onBlur={onBlur}
-            style={{ whiteSpace: 'pre-line' }}
+            style={{ ...props.style, whiteSpace: 'pre-line' }}
         >
         </div>
     )

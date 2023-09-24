@@ -1,6 +1,6 @@
 import { richText } from "../data";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { updateContent, updateFormatting } from "../lib/utils";
+import { updateRichText } from "../lib/utils";
 
 const specialKeys = [
     'Control', 'Shift', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'
@@ -21,6 +21,7 @@ export function useRichTextUpdate(
         e.stopPropagation();
         
         if (specialKeys.includes(e.key)) return;
+        if (e.ctrlKey) return;
         if (!contentEditableDivRef.current) return;
 
         const selection = window.getSelection()!;
@@ -46,19 +47,33 @@ export function useRichTextUpdate(
 
         console.log(textContent);
         
+        // const updatedRichText = !e.ctrlKey
+        //     ? updateContent(
+        //         richText,
+        //         textContent,
+        //         startOffset,
+        //         endOffset
+        //     )
+        //     : updateFormatting(
+        //         richText,
+        //         e.key,
+        //         startOffset,
+        //         endOffset
+        //     );
+
         const updatedRichText = !e.ctrlKey
-            ? updateContent(
+            ? updateRichText(
                 richText,
-                textContent,
-                startOffset,
-                endOffset
+                {
+                    type: 'contentUpdate',
+                    payload: {
+                        newTextContent: textContent,
+                        startOffset,
+                        endOffset
+                    }
+                }
             )
-            : updateFormatting(
-                richText,
-                e.key,
-                startOffset,
-                endOffset
-            );
+            : richText;
 
         console.log(e.key);
         console.log(updatedRichText);

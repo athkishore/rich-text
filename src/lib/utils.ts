@@ -220,3 +220,26 @@ export function updateFormatting(
         return prevRichText;
     }
 }
+
+export function updateRichText(prevRichText: typeof richText, action: { type: string, payload: any }) {
+    switch(action.type) {
+        case 'contentUpdate':
+            return updateContent(
+                prevRichText,
+                action.payload.newTextContent,
+                action.payload.startOffset,
+                action.payload.endOffset
+            );
+
+        case 'formattingUpdate':
+            return updateFormatting(
+                prevRichText,
+                action.payload.attributes,
+                action.payload.startOffset,
+                action.payload.endOffset
+            );
+
+        default:
+            return prevRichText;
+    }
+}
