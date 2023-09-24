@@ -20,23 +20,35 @@ export function useRichTextUpdate(
         if (e.ctrlKey) e.preventDefault();
         
         if (specialKeys.includes(e.key)) return;
+        if (!contentEditableDivRef.current) return;
 
         const selection = window.getSelection()!;
         const range = selection.getRangeAt(0).cloneRange();
         const selectedLength = range.toString().length;
         const preCaretRange = range.cloneRange();
-        preCaretRange.selectNodeContents(range.startContainer.parentElement!.parentElement!);
+        preCaretRange.selectNodeContents(contentEditableDivRef.current);
         preCaretRange.setEnd(range.endContainer, range.endOffset);
         const endOffset = preCaretRange.toString().length;
         const startOffset = endOffset - selectedLength;
         
         rangeRef.current = range.cloneRange();
         offsets.current = { start: startOffset, end: endOffset };
+
+        let textContent: any = (e.target as Node).textContent || '';
+        if (e.key === 'Enter') {
+            console.log(startOffset);
+            textContent = textContent.split('');
+            textContent.splice(startOffset, 0, '\n')
+            textContent = textContent.join('');
+            console.log(textContent);
+        };
+
+        console.log(textContent);
         
         const updatedRichText = !e.ctrlKey
             ? updateContent(
                 richText,
-                (e.target as Node).textContent || '',
+                textContent,
                 startOffset,
                 endOffset
             )
@@ -46,6 +58,9 @@ export function useRichTextUpdate(
                 startOffset,
                 endOffset
             );
+
+        console.log(e.key);
+        console.log(updatedRichText);
 
         setRichText(updatedRichText);
         
